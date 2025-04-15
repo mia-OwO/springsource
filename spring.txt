@@ -1,0 +1,87 @@
+서버단 작성
+ 1) spring framework : 웹 개발할 때 주로 사용 / 설정 작업  필요 
+ 2) spring boot : spring framework 간편화 버전
+
+프로젝트 생성 
+1. 빌드 툴 설정 
+build: 프로젝트 생성, 라이브러리 설정, 코드작업, 컴파일, 테스트, 패키지 작성, 배포
+ 1) gradle : 일반 text기반, 후발 주자(maven개선)
+ 2) maven : xml기반(태그긴하지만 만들어서 쓰는거라 모르는게 많을 수도), 
+ 
+ 2. spring boot version 선택 : 3.4.4(우리가 쓰는 버전)
+
+3. language 선택(java)
+
+4. 패키지명 : com.example.demo(자유롭게 지정 가능 / 3개정돈 사용해야 함)
+
+5. 패키징타입: jar(java 압축 파일), war(자바 웹 압축파일)
+
+6. java version 선택 : 부트버전에 따라 선택이 달라질 수 있음
+
+7. 필요 라이브러리 선택  : 
+  - Spring Web , dev tools, thymeleaf, lombok
+
+
+화면(front) 단 작성 : html + css + javascript + java
+ 1) jsp 활용 : *.jsp
+  - html 코드 + java 코드 동시 작성 가능 
+  - spring boot에서 사용하기 위해서는 설정 작업 필요(그래서 잘 안 사용함 / 옛날엔 거의 다 jsp)
+
+ 2) 특정 템플릿 엔진 활용 : *.html(자바 코드 사용가능한 html)
+  - thymeleaf, mustache, groovy, freemaker, velocity
+
+스프링 주요 개념
+ 1) IoC(Inversion of Control) : 메소드나 객체의 호출 작업을 개발자가 결정하는 것이 아니라 외부(스프링컨테이너)에서 결정(제어의 역전)
+    
+    class A{}
+    class B{
+        A obj = new A();  (x)
+    }
+
+new 안 해도 잘 돌아가는 이유
+    컨테이너는 어느 객체를 생성 할 것인지 알아야 함 => 어노테이션으로 알려주기
+     * 어노테이션: 컨테이너야 객체 생성해줘
+     - 컨테이너가 생성한 객체 : bean  -> 컨테이너가 관리
+     - 싱글톤 방식(객체는 하나만  생성)으로 객체 생성 
+     - @Controller, @Service, @Component 
+
+ 2) 경로 임의로 생성
+   http://localhost:8080/ ==> Controller 파일의 메소드와 매핑
+   / == http://localhost:8080/
+
+   uri 설계
+   ex) 게시판 개발
+   게시글 작성 : /bord/create
+   게시글 목록 : /bord/list
+   게시글 조회 : /bord/read
+   게시글 수정 : /bord/update
+
+
+@RequestMapping("/board")
+public class BoardController{
+   @GetMapping("/create")
+   public String  method(){
+    return "info";
+   }
+
+http://localhost:8080/board/create 브라우저요청 => 컨트롤러 응답(8080이후의 경로를 가진 컨트롤러) => templates 찾기(templates/return값 찾기)
+=> templates / info.html 작성
+
+
+   @GetMapping("/update")
+   public void method(){
+    
+   }
+    http://localhost:8080/board/update 브라우저요청 => 컨트롤러 응답(8080이후의 경로를 가진 컨트롤러) => templates 찾기(templates / 경로(/board/update ))
+=> templates / board/update.html 작성
+}
+
+
+
+
+
+
+
+
+
+
