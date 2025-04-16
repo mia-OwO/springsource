@@ -124,4 +124,17 @@ http://localhost:8080/board/create 브라우저요청 => 컨트롤러 응답(808
      - 컨트롤러에서 변수로 받아오는 경우 무조건 입력값 소멸
 
 
-   
+  경로 설정
+
+  http://localhost:8080 /   -> 고정
+
+  href 경로 설정 시 현재경로(주소줄에 있는 경로)
+
+  현재 경로 : http://localhost:8080/sample 
+  움직일 경로(도착) : http://localhost:8080/ex1  
+
+th:href=@{ex1(id=${dto.id})} : / 안 붙이면 현재 경로에서 맨 마지막 경로를 대체 주소 설정(마지막만 바꿈)
+th:href=@{/ex1(id=${dto.id})} : / 붙이면 무조건 8080 다음 부터 경로 설정
+  
+#temporals.format(dto.regDateTime,'yyyy-MM-dd hh:mm')  -> LocalDateTime
+#dates.format(now,'yyyy-MM-dd') -> Date()
