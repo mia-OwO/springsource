@@ -28,7 +28,7 @@ import lombok.ToString;
 @EntityListeners(value = AuditingEntityListener.class)
 
 @Getter
-@Setter
+// @Setter
 @ToString
 @AllArgsConstructor
 @Builder
@@ -49,4 +49,10 @@ public class Memo {
     @Column(nullable = false) // 넣어도 됨
     @LastModifiedDate
     private LocalDateTime updateDate;
+
+    // setter대신 changeMemoText
+    public void changeMemoText(String memoText) {
+        this.memoText = memoText;
+    }
+
 }
