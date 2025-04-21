@@ -1,0 +1,68 @@
+@ManyToOne : left join
+
+@OneToMany: One 테이블만 select 실행
+
+=> 양방향 -> 단방향 두개 연결  -> 주인이 되는 관계를 명시해야함(n쪽이 주인)
+=> @OneToMany(mappedBy = "team")
+
+@OneToMany
+org.hibernate.LazyInitializationException: failed to lazily initialize a collection of role: com.example.relation.entity.team.Team.members: could not initialize proxy - no Session
+LazyInitializationException : member를 못 가져 옴
+
+=> 해결방법
+ 1. @Transactional 붙이기 : select 구문 2개로 처리
+ 2. FetchType 변경 :
+    FetchType.EAGER(즉시) 관계에 있는 테이블 정보를 즉시 가지고 나오기
+    => lefg join 처리
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
