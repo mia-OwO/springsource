@@ -6,7 +6,7 @@ import org.modelmapper.spi.MatchingStrategy;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-@Configuration
+@Configuration // 환경설정 파일
 public class RootConfig {
     @Bean
     ModelMapper getMapper() {

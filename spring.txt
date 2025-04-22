@@ -198,7 +198,7 @@ org.springframework.data 제공  -> 시간이 자동으로 들어가지 않음 -
   @CreatedDate
   @LastModifiedDate
  +설정작업 필요
- - main 이 있는 클래스에 @Enable.JpaAuditing 부착
+ - main 이 있는 클래스에 @EnableJpaAuditing 부착
  - Entity 클래스에 EntityListeners(value = AuditingEntityListener.class) 부착
  ==> 상속개념을 사용하려면 framework로 
 --------------------------------------------------------------------------------------------------------------
@@ -210,3 +210,10 @@ Repository 제공 메소드
  2) findById() : select(where)
  3) findAll() : 전체조회
  4) deleteById() / delete() : 삭제
+
+
+
+
+- modelmapper : dto ==> entity, entity ==> dto 자동으로 처리
+  1. RootConfig.java 작성
+   

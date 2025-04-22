@@ -1,36 +1,36 @@
-package com.example.relation.entity.sports;
+package com.example.mart.entity;
 
-import com.example.relation.entity.BaseEntity;
+import java.util.ArrayList;
+import java.util.List;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.OneToOne;
+import jakarta.persistence.OneToMany;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 import lombok.ToString;
 
-@Builder
-@Setter
+@ToString(exclude = "categories")
 @Getter
-@ToString(exclude = "locker")
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder
+
 @Entity
-public class SportsMember extends BaseEntity {
+public class Category extends BaseEntity {
     @Id
+    @Column(name = "CATEGORY_ID")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "MEMBER_ID")
     private Long id;
 
     private String name;
 
-    @OneToOne(fetch = FetchType.LAZY) // FetchType변경
-    private Locker locker;
+    // @Builder.Default
+    // @OneToMany(mappedBy = "category")
+    // private List<Category> categories = new ArrayList<>();
 }

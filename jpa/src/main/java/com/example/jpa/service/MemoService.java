@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
 import com.example.jpa.dto.MemoDTO;
@@ -19,6 +20,7 @@ import lombok.RequiredArgsConstructor;
 public class MemoService {
     // Repository 메소드 호출한 후 결과 받기
     private final MemoRepository memoRepository;
+    private final ModelMapper modelMapper;
 
     public List<MemoDTO> getList() {
         List<Memo> list = memoRepository.findAll();
@@ -39,13 +41,16 @@ public class MemoService {
         // 좀 더 간단하게
         // list.stream().forEach(memo -> System.out.println(memo));
         // or
-        List<MemoDTO> memos = list.stream().map(memo -> entityToDto(memo)
-        // MemoDTO dto = MemoDTO.builder()
-        // .mno(memo.getMno())
-        // .memoText(memo.getMemoText())
-        // .build();
-        // return dto;
-        ).collect(Collectors.toList());
+        List<MemoDTO> memos = list.stream()
+                .map(memo -> entityToDto(memo)
+
+                // .map(memo -> modelMapper.map(memo, MemoDTO.class)
+                // MemoDTO dto = MemoDTO.builder()
+                // .mno(memo.getMno())
+                // .memoText(memo.getMemoText())
+                // .build();
+                // return dto;
+                ).collect(Collectors.toList());
         return memos;
     }
 
@@ -53,6 +58,8 @@ public class MemoService {
         Memo memo = memoRepository.findById(mno).orElseThrow(EntityNotFoundException::new);
         // entity => dto
         MemoDTO dto = entityToDto(memo);
+        // modelMapper.map(원본,변경할 타입)
+        // MemoDTO dto = modelMapper.map(memo, MemoDTO.class);
         return dto;
     }
 
@@ -87,6 +94,7 @@ public class MemoService {
         // MemoDtO => Memo 변환
 
         Memo memo = dtoToEntity(dto);
+        // Memo memo = modelMapper.map(dto, Memo.class);
         // 새로저장한 memo 리턴됨
         memo = memoRepository.save(memo);
         return memo.getMno();

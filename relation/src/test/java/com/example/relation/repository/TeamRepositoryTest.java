@@ -111,4 +111,31 @@ public class TeamRepositoryTest {
         team.getMembers().forEach(member -> System.out.println(member));
 
     }
+
+    // --------------------------------
+    // 양방향
+    // 영속성 전이 : Cascade
+    // --------------------------------
+
+    @Test
+    public void insertTest3() {
+
+        // 멤버의 팀 정보
+        Team team = Team.builder().teamName("team3").build();
+
+        TeamMember member = TeamMember.builder().userName("홍길동").team(team).build();
+        team.getMembers().add(member);
+
+        // teamMemberRepository.save(member); -> 안 해도 같이 저장됨
+        teamRepository.save(team);
+
+    }
+
+    @Test
+    public void deleteTest2() {
+        // 부모 삭제시 자식도 같이 삭제
+        // deleteTest() 와 비교
+        teamRepository.deleteById(3L);
+    }
+
 }
