@@ -3,6 +3,7 @@ package com.example.demo.controller;
 import java.lang.ProcessBuilder.Redirect;
 
 import org.springframework.stereotype.Controller;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import lombok.extern.log4j.Log4j2;
@@ -15,6 +16,7 @@ import com.example.demo.dto.LoginDTO;
 import com.example.demo.dto.MemberDTO;
 
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
 
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -32,15 +34,22 @@ public class MemberController {
     // void --> templates/member/register을 찾으러 감
 
     @GetMapping("/register")
-    public void getRegister() {
+    public void getRegister(@ModelAttribute("mDto") MemberDTO memberDTO) {
         log.info(("회원가입"));
         // void : 템플릿 찾음
     }
 
     // @ModelAttribute : 별칭을 붙일 때 사용
     @PostMapping("/register")
-    public String postRegister(@ModelAttribute("mDTO") MemberDTO memberDTO, RedirectAttributes rttr) {
+    // @Valid 다음 바로 BindingResult가 와야함!!
+    public String postRegister(@ModelAttribute("mDto") @Valid MemberDTO memberDTO, BindingResult result,
+            RedirectAttributes rttr) {
         log.info("회원가입 요청 {}", memberDTO);
+
+        // 유효성 검사 통과하지 못한다면 원래 입력 페이지로 돌아가기
+        if (result.hasErrors()) {
+            return "/member/register";
+        }
 
         // login페이지로 이동
         // redirect 방식으로 닥면서 값을 보내고 싶다면?

@@ -1,8 +1,8 @@
 package com.example.mart.repository;
 
-import java.util.Locale.Category;
-
 import org.springframework.data.jpa.repository.JpaRepository;
+
+import com.example.mart.entity.Category;
 
 public interface CategoryRepository extends JpaRepository<Category, Long> {
 

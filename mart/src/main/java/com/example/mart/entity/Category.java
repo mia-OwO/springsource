@@ -8,6 +8,9 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToMany;
 import jakarta.persistence.OneToMany;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -15,7 +18,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
-@ToString(exclude = "categories")
+@ToString
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
@@ -30,7 +33,14 @@ public class Category extends BaseEntity {
 
     private String name;
 
-    // @Builder.Default
-    // @OneToMany(mappedBy = "category")
-    // private List<Category> categories = new ArrayList<>();
+    @OneToMany(mappedBy = "category")
+    @Builder.Default
+    private List<CategoryItem> categoryItems = new ArrayList<>();
+
+    // @ManyToMany를 사용한다면
+    @Builder.Default
+    @JoinTable(name = "CATOGORY_ITEM1", joinColumns = @JoinColumn(name = "CATEGORY_ID"), inverseJoinColumns = @JoinColumn(name = "ITEM_ID"))
+    @ManyToMany
+    private List<Item> items = new ArrayList<>();
+
 }

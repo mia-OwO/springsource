@@ -1,7 +1,5 @@
 package com.example.mart.entity;
 
-import java.util.Locale.Category;
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -16,7 +14,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
-@ToString
+@ToString(exclude = { "item", "category" })
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
