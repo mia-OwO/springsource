@@ -54,7 +54,7 @@ public class TodoRepositoryTest {
     }
 
     @Test
-    // todo 수정 - 완료(1)
+    // todo 수정 - 완료
     public void testUpdate() {
         ToDo todo = todoRepository.findById(1L).get();
         todo.setCompleted(true);

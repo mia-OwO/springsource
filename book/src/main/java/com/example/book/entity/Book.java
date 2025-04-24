@@ -1,4 +1,4 @@
-package com.example.todo.entity;
+package com.example.book.entity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -20,22 +20,21 @@ import lombok.ToString;
 @AllArgsConstructor
 @NoArgsConstructor
 
-@Table(name = "todo")
+@Table(name = "BOOKTBL")
 @Entity
-public class ToDo extends BaseEntity {
+public class Book extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "TODO_ID")
-    private Long id;
+    private Long code;
 
     @Column(nullable = false)
-    private String content;
+    private String title;
 
-    @Column(columnDefinition = "NUMBER(1) DEFAULT 0", nullable = false)
-    private boolean completed;
+    @Column(nullable = false)
+    private String author;
 
-    @Column(columnDefinition = "NUMBER(1) DEFAULT 0", nullable = false)
-    private boolean importanted;
+    @Column(nullable = false)
+    private int price;
 
 }
