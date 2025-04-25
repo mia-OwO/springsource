@@ -29,6 +29,8 @@ ToDo 테이블
 
 
 
+th:if="${#fields.hasErrors('title')}" th:errors="*{title}" class="text-danger"
+
 
 
 

@@ -1,5 +1,6 @@
 package com.example.jpa.repository;
 
+import java.util.List;
 import java.util.stream.LongStream;
 
 import org.junit.jupiter.api.Test;
@@ -15,6 +16,14 @@ import jakarta.persistence.EntityNotFoundException;
 public class MemoRepositoryTest {
     @Autowired
     private MemoRepository memoRepository;
+
+    @Test
+    public void queryMethodTest() {
+        System.out.println(memoRepository.findByMnoLessThan(5L));
+        System.out.println(memoRepository.findByMnoLessThanOrderByMnoDesc(10L));
+        System.out.println(memoRepository.findByMemoTextContaining("memo"));
+
+    }
 
     // test 메소드 작성
     @Test

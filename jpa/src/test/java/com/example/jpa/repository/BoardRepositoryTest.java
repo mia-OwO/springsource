@@ -7,13 +7,33 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import com.example.jpa.entity.Board;
-import com.example.jpa.entity.Memo;
 
 @SpringBootTest
 public class BoardRepositoryTest {
 
     @Autowired
     private BoardRepository boardRepository;
+
+    @Test
+    public void queryMethodTest() {
+        // findByColumn -> where =
+        // System.out.println(boardRepository.findByWriter("user4"));
+        // System.out.println(boardRepository.findByTitle("board Title1"));
+        // System.out.println(boardRepository.findByWriterStartingWith("user")); //
+        // user%
+        // System.out.println(boardRepository.findByWriterEndingWith("user")); // %user
+        System.out.println(boardRepository.findByWriterContaining("user")); // %user%
+
+        // System.out.println(boardRepository.findByWriterContainingOrContentContaining("5",
+        // "9"));
+        // System.out.println(boardRepository.findByWriterContainingAndContentContaining("5",
+        // "9"));
+        // System.out.println(boardRepository.findByBnoGreaterThan(5L));
+
+        // System.out.println(boardRepository.findByBnoGreaterThanOrderByBnoDesc(0L));
+        // System.out.println(boardRepository.findByBnoBetween(5L, 10L));
+
+    }
 
     // CRUD
 
