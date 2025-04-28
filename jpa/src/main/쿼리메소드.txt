@@ -1,0 +1,39 @@
+JPA에서 제공하는 sql 관련 메소드
+
+findById() : @Id 어노테이션이 부여된 요소 (PK)를 기준으로 찾기
+             select * from board where bno = 1;
+finAll() : 전체 찾기(select * from board) 
+save() 
+
+-------------------------------------------------------------------------------
+
+쿼리 메소드 지원
+1) findBy~~~~ 
+   List<Board> findByWriter(String writer);
+
+2) @Query 어노테이션 사용(from은 entity 기준)
+   @Query("select b from Board b where b.writer = ?1")
+    List<Board> findByWriter(String writer);
+    - 파라메터 설정
+    1. ?1         ->     @Query("select b from Board b where b.writer = ?1")
+    2. : 변수명   ->     @Query("select b from Board b where b.writer = :writer")
+                         List<Board> findByWriter(@Param("writer") String writer);  -> 좀 더 정확하게
+
+3) QueryDSL 이용 - 다른 라이브러리 도움 받기(SpringBoot에서 제공)
+   (1) QuerydslPredicateExecutor(안되는 경우도 많음) : 인터페이스
+        - 간단한 곳에서 사용 편리함
+        - 조인 불가능(left join 불가능)
+        - 복잡한 실무 환경에서는 사용하기에 한계가 명확 
+   (2) QuerydslRepositorySupport : 추상클래스
+        - 확장성 제공
+        - 조인 가능
+       fetch() : 리스트 조회, 데이터 없는 경우 빈리스트 반환
+       fetchFirst() : limit(1), fetchOne()
+       fetchOne() : 결과가 없으면 null, 둘 이상이면 NonUniqueException
+       fetchResults() 페이지 정보 포함, total count 쿼리 추가 실행
+       fetchCount() : count 쿼리로 변경해서 count 수 조회
+
+
+
+
+     
