@@ -5,9 +5,15 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.modelmapper.ModelMapper;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import com.example.book.dto.BookDTO;
+import com.example.book.dto.PageRequestDTO;
+import com.example.book.dto.PageResultDTO;
 import com.example.book.entity.Book;
 import com.example.book.repository.BookRepository;
 
@@ -33,14 +39,31 @@ public class BookService {
 
     // modelMapper : 객체간 매칭 자동화(entity -> dto)
     // Collectors.toList(): 스트림의 결과를 리스트로 수집
-    public List<BookDTO> readAll() {
-        List<Book> list = bookRepository.findAll(); // Book entity 조회
+    public PageResultDTO<BookDTO> readAll(PageRequestDTO pageRequestDTO) {
+        // List<Book> list = bookRepository.findAll(); // Book entity 조회
+
+        Pageable pageable = PageRequest.of(pageRequestDTO.getPage() - 1, pageRequestDTO.getSize(),
+                Sort.by("code").descending());
+
+        Page<Book> result = bookRepository
+                .findAll(bookRepository.makePredicate(pageRequestDTO.getType(), pageRequestDTO.getKeyword()), pageable);
         // entity => dto
         // modelMapper.map(book, BookDTO.class)
-        List<BookDTO> books = list.stream().map(book -> modelMapper.map(book, BookDTO.class))
-                .collect(Collectors.toList()); // entity -> BookDTO 변환
 
-        return books; // BookDTO -> list 반환
+        List<BookDTO> books = result.get().map(book -> modelMapper.map(book, BookDTO.class))
+                .collect(Collectors.toList());
+        long totalCount = result.getTotalElements();
+        return PageResultDTO.<BookDTO>withAll()
+                .dtoList(books)
+                .totalCount(totalCount)
+                .pageRequestDTO(pageRequestDTO)
+                .build();
+
+        // List<BookDTO> books = list.stream().map(book -> modelMapper.map(book,
+        // BookDTO.class))
+        // .collect(Collectors.toList()); // entity -> BookDTO 변환
+
+        // return books; // BookDTO -> list 반환
     }
 
     public void modify(BookDTO dto) {
