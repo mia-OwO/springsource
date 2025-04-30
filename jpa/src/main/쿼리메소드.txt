@@ -27,6 +27,21 @@ save()
    (2) QuerydslRepositorySupport : 추상클래스
         - 확장성 제공
         - 조인 가능
+        - sort 안됨  --> sort 따로 생성
+
+        => Sort sort = pageable.getSort();
+
+        // sort기준이 여러개 일 수 있어서 foreach돌려
+        sort.stream().forEach(order -> {
+            Order direction = order.isAscending() ? Order.ASC : Order.DESC;
+            // 정해진 형식
+            String prop = order.getProperty();
+            PathBuilder<Board> orderBuilder = new PathBuilder<>(Board.class, "board");
+            tuple.orderBy(new OrderSpecifier(direction, orderBuilder.get(prop)));
+        });
+
+
+
        fetch() : 리스트 조회, 데이터 없는 경우 빈리스트 반환
        fetchFirst() : limit(1), fetchOne()
        fetchOne() : 결과가 없으면 null, 둘 이상이면 NonUniqueException
@@ -34,6 +49,32 @@ save()
        fetchCount() : count 쿼리로 변경해서 count 수 조회
 
 
+   sort.stream().forEach(order -> {
+            Order direction = order.isAscending() ? Order.ASC : Order.DESC;
+            // 정해진 형식
+            String prop = order.getProperty();
+            PathBuilder<Board> orderBuilder = new PathBuilder<>(Board.class, "board");
+            tuple.orderBy(new OrderSpecifier(direction, orderBuilder.get(prop)));
+        });
+        // ----------------------전체 리스트 + Sort 적용
+
+        // page 처리..
+        tuple.offset(pageable.getOffset()); // 처음 위치에서의 계산을 해줌
+        // 10
+
+        tuple.limit(pageable.getPageSize());
+        // .. 페이지 처리
+
+        // Tuple : 행하나를 담는 구조
+        List<Tuple> result = tuple.fetch(); // 실행, 결과 반환
+
+        // 전체 개수 fetchCount()
+        long count = tuple.fetchCount();
+        List<Object[]> list = result.stream().map(t -> t.toArray()).collect(Collectors.toList());
+        return new PageImpl<>(list, pageable, count);
+      
+
+      ==> 거의 고정
 
 
      
