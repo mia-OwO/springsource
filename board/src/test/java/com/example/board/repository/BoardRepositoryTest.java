@@ -110,11 +110,16 @@ public class BoardRepositoryTest {
     @Test
     public void listTest() {
 
-        // PageRequestDTO pageRequestDTO =
-        // PageRequestDTO.builder().page(0).size(10).build();
-        Pageable pageable = PageRequest.of(0, 10, Sort.by("bno").descending());
+        PageRequestDTO pageRequestDTO = PageRequestDTO.builder()
+                .page(0)
+                .size(10)
+                .type("tc")
+                .keyword("title")
+                .build();
+        Pageable pageable = PageRequest.of(pageRequestDTO.getPage(), pageRequestDTO.getSize(),
+                Sort.by("bno").descending());
 
-        Page<Object[]> result = boardRepository.list(pageable);
+        Page<Object[]> result = boardRepository.list(pageRequestDTO.getType(), pageRequestDTO.getKeyword(), pageable);
         // for (Object[] objects : result) {
         // Board board = (Board) objects[0];
         // Member member = (Member) objects[1];

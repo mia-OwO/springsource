@@ -3,6 +3,7 @@ package com.example.board.entity;
 import java.util.ArrayList;
 import java.util.List;
 
+import groovyjarjarantlr4.v4.parse.BlockSetTransformer.setAlt_return;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -20,7 +21,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
-@Setter
 @Getter
 @ToString(exclude = { "member", "replies" })
 @Builder
@@ -47,5 +47,13 @@ public class Board extends BaseEntity {
     @Builder.Default
     @OneToMany(mappedBy = "board") // rreply - 주인
     private List<Reply> replies = new ArrayList<>();
+
+    public void changeContent(String content) {
+        this.content = content;
+    }
+
+    public void changeTitle(String title) {
+        this.title = title;
+    }
 
 }

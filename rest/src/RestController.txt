@@ -1,0 +1,15 @@
+Rest
+ 1) GET : Read
+ 2) POST : Create
+ 3) PUT/PATCH: Update 수정
+ 4) DELETE:  Delete 삭제
+
+ ------------------------------------
+ @RestController
+ @DeleteMappring
+ @PutMapping 
+ @PathVariable
+ @RequestBody 
+ @ResponseBody
+
+ ResponseEntity
