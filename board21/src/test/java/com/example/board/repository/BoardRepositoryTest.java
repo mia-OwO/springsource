@@ -11,12 +11,13 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.transaction.annotation.Transactional;
 
 import com.example.board.dto.PageRequestDTO;
 import com.example.board.entity.Board;
 import com.example.board.entity.Member;
 import com.example.board.entity.Reply;
+
+import jakarta.transaction.Transactional;
 
 @SpringBootTest
 public class BoardRepositoryTest {
@@ -31,17 +32,8 @@ public class BoardRepositoryTest {
     private ReplyRepository replyRepository;
 
     @Test
-    public void listReplyTest() {
-        Board board = Board.builder()
-                .bno(1L)
-                .build();
-        List<Reply> list = replyRepository.findByBoardOrderByRno(board);
-
-        System.out.println(list);
-    }
-
-    @Test
     public void insertMemberTest() {
+
         IntStream.rangeClosed(1, 10).forEach(i -> {
             Member member = Member.builder()
                     .email("user" + i + "@gmail.com")
@@ -49,7 +41,6 @@ public class BoardRepositoryTest {
                     .name("USER" + i)
                     .build();
             memberRepository.save(member);
-
         });
     }
 
@@ -57,34 +48,35 @@ public class BoardRepositoryTest {
     public void insertBoardTest() {
 
         IntStream.rangeClosed(1, 100).forEach(i -> {
-            int random = (int) (Math.random() * 10) + 1;
-            Member member = Member.builder().email("user" + random + "@gmail.com").build();
+
+            int no = (int) (Math.random() * 10) + 1;
+            Member member = Member.builder().email("user" + no + "@gmail.com").build();
+
             Board board = Board.builder()
-                    .title("title" + i)
-                    .content("content" + i)
+                    .title("Board Title" + i)
+                    .content("Board Content" + i)
                     .member(member)
-                    // .member(memberRepository.findById("user" + random + "@gmail.com").get())
                     .build();
+
             boardRepository.save(board);
         });
     }
 
     @Test
     public void insertReplyTest() {
-        IntStream.rangeClosed(1, 100).forEach(i -> {
-            long random = (int) (Math.random() * 100) + 1;
 
-            Board board = Board.builder().bno(random).build();
+        IntStream.rangeClosed(1, 100).forEach(i -> {
+
+            long no = (int) (Math.random() * 100) + 1;
+            Board board = Board.builder().bno(no).build();
 
             Reply reply = Reply.builder()
-                    .text("Reply" + i)
+                    .text("Reply...." + i)
                     .replyer("guest" + i)
-                    // .board(boardRepository.findById(random).get())
                     .board(board)
                     .build();
             replyRepository.save(reply);
         });
-
     }
 
     @Test
@@ -103,7 +95,7 @@ public class BoardRepositoryTest {
     @Transactional
     @Test
     public void readBoardTest3() {
-        Board board = boardRepository.findById(3L).get();
+        Board board = boardRepository.findById(5L).get();
         System.out.println(board.getMember());
         System.out.println(board.getReplies());
     }
@@ -128,26 +120,16 @@ public class BoardRepositoryTest {
                 .build();
         Pageable pageable = PageRequest.of(pageRequestDTO.getPage(), pageRequestDTO.getSize(),
                 Sort.by("bno").descending());
-
         Page<Object[]> result = boardRepository.list(pageRequestDTO.getType(), pageRequestDTO.getKeyword(), pageable);
-        // for (Object[] objects : result) {
-        // Board board = (Board) objects[0];
-        // Member member = (Member) objects[1];
-        // Long replyCount = (Long) objects[2];
-        // System.out.println(board);
-        // System.out.println(member);
-        // System.out.println(replyCount);
-        // }
 
         for (Object[] objects : result) {
             System.out.println(Arrays.toString(objects));
         }
-
     }
 
     @Test
     public void rowTest() {
-        Object[] result = boardRepository.getBoardByBno(55L);
+        Object[] result = boardRepository.getBoardByBno(5L);
         System.out.println(Arrays.toString(result));
     }
 }

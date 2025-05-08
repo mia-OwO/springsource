@@ -11,7 +11,7 @@ public class CustomServletConfig implements WebMvcConfigurer {
     public void addCorsMappings(CorsRegistry registry) { // 메서드 이름 수정
         registry.addMapping("/**")
                 .allowedOrigins("*") // 어디서 뭐가 와도
-                .allowedMethods("HEAD", "GET", "POST", "DELETE")
+                .allowedMethods("HEAD", "GET", "POST", "DELETE", "PUT")
                 .maxAge(300)
                 .allowedHeaders("Authorization", "Cache-Control", "Content-Type");
     }
