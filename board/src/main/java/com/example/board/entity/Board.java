@@ -45,7 +45,7 @@ public class Board extends BaseEntity {
 
     // 게시글에 달려있는 댓글 정보 조회
     @Builder.Default
-    @OneToMany(mappedBy = "board") // rreply - 주인
+    @OneToMany(mappedBy = "board") // reply - 주인
     private List<Reply> replies = new ArrayList<>();
 
     public void changeContent(String content) {
