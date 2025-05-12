@@ -9,7 +9,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport;
 
-import com.example.board.dto.PageRequestDTO;
 import com.example.board.entity.Board;
 import com.example.board.entity.QBoard;
 import com.example.board.entity.QMember;

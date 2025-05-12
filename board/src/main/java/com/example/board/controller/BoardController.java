@@ -2,6 +2,7 @@ package com.example.board.controller;
 
 import java.util.List;
 
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -21,8 +22,6 @@ import com.example.board.service.BoardService;
 import jakarta.validation.Valid;
 
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
 
 @RequestMapping("/board")
 @Controller
@@ -33,6 +32,7 @@ public class BoardController {
     private final BoardService boardService;
 
     // (@ModelAttribute("dto") -> dto로 안 가져옴 -> 별칭(dto)
+    @PreAuthorize("isAuthenticated()") // 인증된거 확인
     @GetMapping("/create")
     public void getCreate(@ModelAttribute("dto") BoardDTO dto, PageRequestDTO pageRequestDTO) {
         log.info("글 작성 폼 요청");
@@ -40,6 +40,7 @@ public class BoardController {
 
     // @Valid BoardDTO dto,BindingResult result -> 두개 연달아서 사용
 
+    @PreAuthorize("isAuthenticated()") // 인증된거 확인
     @PostMapping("/create")
     public String postCreate(@ModelAttribute("dto") @Valid BoardDTO dto, BindingResult result,
             PageRequestDTO pageRequestDTO,
@@ -78,6 +79,7 @@ public class BoardController {
 
     }
 
+    @PreAuthorize("authentication.name == #dto.email")
     @PostMapping("/modify")
     public String postMethodName(BoardDTO dto, PageRequestDTO pageRequestDTO, RedirectAttributes rttr) {
         log.info("수정 {} {} ", dto, pageRequestDTO);

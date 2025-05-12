@@ -14,7 +14,9 @@ import lombok.NoArgsConstructor;
 public class ReplyDTO {
     private Long rno;
     private String text;
-    private String replyer;
+
+    private String replyerEmail;
+    private String replyerName;
     // 게시글 번호(부모 번호)
     private Long bno;
 

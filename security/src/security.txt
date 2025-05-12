@@ -42,3 +42,93 @@ spring security
  로그인 처리를 위한 Service는 작성해야 함 :  UserDetailsService 구현해야함
 
  데이터 입력 -> controller x service로 바로 넘어감
+
+ 로그인 단 -> 생성x -> 컨트롤러x 
+ security는 정해진 규칙이 있음 : UserDetailsService 상속-> 로그인단
+ DTO도 User 상속, password를 DTO에 안 가져옴 -> 가져와도 되는데 password는 암호화 돼서 의미 없음
+ 인증이 되면 auth에 저장(?)
+
+{
+  "authorities": [
+    {
+      "authority": "ROLE_USER"
+    }
+  ],
+  "details": {
+    "remoteAddress": "0:0:0:0:0:0:0:1",
+    "sessionId": "323F2ED46B5526804505B9031C9301FC"
+  },
+  "authenticated": true,
+  "principal": {
+    "username": "user1@gmail.com",
+    "password": "{bcrypt}$2a$10$aOxkpJs9RxJ8EwK/FNCfquAESlOx1D7KQuffYSkzVmA/RbXFKFpga",
+    "fromSocial": false,
+    "authorities": [
+      {
+        "authority": "ROLE_USER"
+      }
+    ],
+    "accountNonExpired": true,
+    "accountNonLocked": true,
+    "credentialsNonExpired": true,
+    "enabled": true,
+    "email": "user1@gmail.com",
+    "name": "user1"
+  },
+  "credentials": null,
+  "name": "user1@gmail.com"
+} 요렇게 담김
+  "password": "{bcrypt}$2a$10$aOxkpJs9RxJ8EwK/FNCfquAESlOx1D7KQuffYSkzVmA/RbXFKFpga", -> password를 dto에 안 담으면 null로 나옴
+
+
+  <span sec:authentication="principal.authorities"> :  [ROLE_USER]
+
+  <span sec:authentication="principal.username"> :user1@gmail.com
+
+  sec: security 약자
+  principal -> "principal": {
+    "username": "user1@gmail.com",
+    "password": "{bcrypt}$2a$10$aOxkpJs9RxJ8EwK/FNCfquAESlOx1D7KQuffYSkzVmA/RbXFKFpga",
+    "fromSocial": false,
+    "authorities": [
+      {
+        "authority": "ROLE_USER"
+      }
+    ],}
+
+
+        <h3 sec:authorize="hasRple('ROLE_ADMIN')">ADMIN</h3>
+    <!-- 페이지 내에서도 해당 권한(ex_ admin)만 보이게 할 수 있음 -->
+
+
+    home:   <div sec:authorize="hasAnyRole({'ROLE_USER','ROLE_MANAGER','ROLE_ADMIN'})"> -> 3개중 하나
+     <div sec:authorize="isAuthenticated()"> : 인증이 되었다면
+
+
+
+    소셜계정처리
+    => 테이블 저장
+      email, pw
+
+ public class CustomLoginSuccessHandler implements AuthenticationSuccessHandler  : 지정되어 있음AuthenticationSuccessHandler 상속해야됨
+
+
+
+
+config 주소로 x:
+- >        // http.authorizeHttpRequests(authorize -> authorize
+        // .requestMatchers("/", "/sample/guest").permitAll()
+        // .requestMatchers("/sample/member").hasRole("USER")
+        // .requestMatchers("/sample/admin").hasRole("ADMIN")
+        // .anyRequest().authenticated())
+
+ -->        http.authorizeHttpRequests(authirize -> authirize
+                .requestMatchers("/css/**", "/js/**", "/image/**").permitAll() // static있는거 다 열어
+                .anyRequest().permitAll())
++
+
+   @PreAuthorize("hasAnyRole('ADMIN')")  @PreAuthorize("hasAnyRole(permitAll)())") -> controller
+
+
+- 403에러(security 적용 후)
+csrf 값 확인: 자동으로 들어감 -> form에 action 값 적었는지 확인

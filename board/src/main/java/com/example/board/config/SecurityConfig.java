@@ -1,4 +1,4 @@
-package com.example.security.config;
+package com.example.board.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -14,7 +14,7 @@ import org.springframework.security.web.authentication.rememberme.TokenBasedReme
 import org.springframework.security.web.authentication.rememberme.TokenBasedRememberMeServices.RememberMeTokenAlgorithm;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
-import com.example.security.security.CustomLoginSuccessHandler;
+import com.example.board.security.CustomLoginSuccessHandler;
 
 @EnableMethodSecurity // controller에서 @PreAuthorize, @PostAuthorize 사용할거야
 @EnableWebSecurity // "/sample/guest" 이런거 안 하고 어떤 권한 가지고
@@ -39,9 +39,9 @@ public class SecurityConfig {
                 // .formLogin(Customizer.withDefaults()); // 시큐리티가 제공하는 기본 폼 페이지
                 .formLogin(login -> login.loginPage("/member/login")
                         .successHandler(successHandler())
-                        .permitAll())
-                // 소셜 로그인도 할거임
-                .oauth2Login(login -> login.successHandler(successHandler()));
+                        .permitAll());
+        // 소셜 로그인도 할거임
+
         // . 으로 연결 안 할거면 http 다시 부르기
         http.logout(logout -> logout
                 // sample member 컨트롤에 가라
@@ -75,21 +75,4 @@ public class SecurityConfig {
 
     }
 
-    // DB가 없어서 했던것 -> db들어와서 주석 처리함
-    // @Bean
-    // UserDetailsService users() {
-    // UserDetails user = User.builder()
-    // .username("user")
-    // .password("{bcrypt}$2a$10$9Pz7H8/ssXGc97bIS3d//.01X9evuJDzKuVmYlfNPG1k4RbI9Xk7u")
-    // .roles("USER") // ROLE_권한명 부여(user)
-    // .build();
-
-    // UserDetails admin = User.builder()
-    // .username("admin")
-    // .password("{bcrypt}$2a$10$9Pz7H8/ssXGc97bIS3d//.01X9evuJDzKuVmYlfNPG1k4RbI9Xk7u")
-    // .roles("USER", "ADMIN") // admin은 USER, ADMIN권한 을 가지고 있음 -> member에 로그인 가능
-    // .build();
-    // return new InMemoryUserDetailsManager(user, admin);
-
-    // }
 }

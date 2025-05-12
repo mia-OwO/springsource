@@ -3,7 +3,6 @@ package com.example.board.entity;
 import java.util.ArrayList;
 import java.util.List;
 
-import groovyjarjarantlr4.v4.parse.BlockSetTransformer.setAlt_return;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -18,7 +17,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
+
 import lombok.ToString;
 
 @Getter

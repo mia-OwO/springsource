@@ -26,8 +26,9 @@
       <a
         class="btn btn-primary"
         th:href="@{modify(bno=${dto.bno},page=${pageRequestDTO.page},size=${pageRequestDTO.size},type=${pageRequestDTO.type},keyword=${pageRequestDTO.keyword})}"
-        >수정</a
-      >
+        th:if="${#authentication.name} ==  ${dto.email}"
+        >수정
+      </a>
       <a
         class="btn btn-success"
         th:href="@{list(page=${pageRequestDTO.page},size=${pageRequestDTO.size},type=${pageRequestDTO.type},keyword=${pageRequestDTO.keyword})}"
