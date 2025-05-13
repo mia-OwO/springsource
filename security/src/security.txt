@@ -130,5 +130,69 @@ config 주소로 x:
    @PreAuthorize("hasAnyRole('ADMIN')")  @PreAuthorize("hasAnyRole(permitAll)())") -> controller
 
 
-- 403에러(security 적용 후)
-csrf 값 확인: 자동으로 들어감 -> form에 action 값 적었는지 확인
+- 403에러(security 적용 후) 
+csrf 값 확인: 자동으로 들어감 -> form에 action 값 적었는지 확인(html)
+            : axios, fetch => headers에 값 추가했는지 확인( js)
+              -> html에서 csrf 생성
+              const csrf = "[[${_csrf.token}]]";
+
+              + 
+               
+               js에서 headers에 csrf 넣기
+               {
+        headers: {
+          "X-CSRF-TOKEN": csrf,
+        },
+      }
+
+
+Model에 담은건 <div th:if="${error}" th:text="${error}" class="text-danger mb-3"></div> 요렇게 사용 가능
+ -> attributeName 활용
+
+
+ config에 방향지정(?)
+       http.authorizeHttpRequests(authirize -> authirize
+                .requestMatchers("/css/**", "/js/**", "/image/**", "assets/**")
+                .permitAll() // static있는거 다 열어
+                .requestMatchers("/", "/board/list", "/board/read")
+                .permitAll()
+                .anyRequest().authenticated())
+
+                or
+                contoroller에  @PreAuthorize("permitAll()") 이거 추가
+
+
+                 @GetMapping({ "/read", "/modify" }) 요런건 requestMatchers( "/board/read") 이걸로 +  .anyRequest().permitAll()
+
+  th:value="${#authentication.principal.name}" 혼자쓰면 로그인 안 됐는데 권한 들고오라해서 오류남
+  sec:authorize="isAuthenticated()" : 로그인을 했다면  처리해라
+
+-thymeleaf security 표현하기
+   1. (th:)value="${#authentication.principal.name}"
+   2. sec:authorize="hasRole('ROLE_ADMIN')
+   3.  sec:authorize="hasAnyRole({'ROLE_USER','ROLE_ADMIN','ROLE_MANAGER'})"
+         hasAnyRole() : Role 여러개 중에 하나만 만족한다면
+         hsaRole() : Role 하나만 작성하고 그 Role에 만족한다면
+   4. sec:authentication="name" : id 가져오기
+   5. sec:authentication="principal.authorities" : 권한 가져오기
+
+-작성한 경로를 제외하고는 모두 로그인 필요함(컨트롤러로 갈 수 없음)
+ http.authorizeHttpRequests(authirize -> authirize
+                .requestMatchers("/css/**", "/js/**", "/image/**", "assets/**").permitAll()
+                .anyRequest().authenticated())
+
+- .anyRequest().permitAll() : 컨트롤러 메소드 단에서 제어
+ @preAuthorize("isAuthenticated()")
+
+-  @GetMapping({ "/read", "/modify" })
+
+서버 : 스프링부트
+       컨트롤러(일반 or Rest) -> 서비스 -> 리포지토리
+       DTO, Entity
+
+화면: 프로젝트마다 다름
+      jsp(레거시 프로젝트), 템플릿(thymeleaf,....),react
+  jsp는 thymeleaf와 유사
+        스프링부트에서는 jsp는 기본 템플릿이 아님 => 설정 작업 필요
+
+          

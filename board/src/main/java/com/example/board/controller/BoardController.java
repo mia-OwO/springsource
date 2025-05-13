@@ -1,7 +1,5 @@
 package com.example.board.controller;
 
-import java.util.List;
-
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -62,6 +60,7 @@ public class BoardController {
         return "redirect:/board/list";
     }
 
+    @PreAuthorize("permitAll()")
     @GetMapping("/list")
     public void getList(Model model, PageRequestDTO pageRequestDTO) {
         log.info("List 요청 {}", pageRequestDTO);
@@ -95,8 +94,11 @@ public class BoardController {
         return "redirect:/board/read";
     }
 
-    @GetMapping({ "/remove" })
-    public String getRemove(Long bno, PageRequestDTO pageRequestDTO, Model model, RedirectAttributes rttr) {
+    // 로그인 사용자 == 작성자 확인 /
+    @PreAuthorize("authentication.name == #email")
+    @PostMapping({ "/remove" }) // get -> post
+    public String getRemove(Long bno, String email, PageRequestDTO pageRequestDTO, Model model,
+            RedirectAttributes rttr) {
         log.info("remove {}", bno);
         // 삭제
 

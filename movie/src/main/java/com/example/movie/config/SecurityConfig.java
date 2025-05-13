@@ -1,4 +1,4 @@
-package com.example.board.config;
+package com.example.movie.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -12,9 +12,8 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.RememberMeServices;
 import org.springframework.security.web.authentication.rememberme.TokenBasedRememberMeServices;
 import org.springframework.security.web.authentication.rememberme.TokenBasedRememberMeServices.RememberMeTokenAlgorithm;
-import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
-import com.example.board.security.CustomLoginSuccessHandler;
+// import com.example.movie.security.CustomLoginSuccessHandler;
 
 @EnableMethodSecurity // controller에서 @PreAuthorize, @PostAuthorize 사용할거야
 @EnableWebSecurity // "/sample/guest" 이런거 안 하고 어떤 권한 가지고
@@ -23,36 +22,21 @@ public class SecurityConfig {
 
     @Bean
     SecurityFilterChain securityFilterChain(HttpSecurity http, RememberMeServices rememberMeServices) throws Exception {
-        // http.authorizeHttpRequests(authorize -> authorize
-        // .requestMatchers("/", "/sample/guest").permitAll()
-        // .requestMatchers("/sample/member").hasRole("USER")
-        // .requestMatchers("/sample/admin").hasRole("ADMIN")
-        // .anyRequest().authenticated())
+
         http.authorizeHttpRequests(authirize -> authirize
-                .requestMatchers("/css/**", "/js/**", "/image/**", "assets/**")
-                .permitAll() // static있는거 다 열어
-                .requestMatchers("/board/read").permitAll()
-                // .requestMatchers("board/modify").authentcated()
-                .requestMatchers("board/modify").hasAnyRole("ADMIN", "MANAGER", "USER")
-                .anyRequest().permitAll())
 
-                // .httpBasic(Customizer.withDefaults());
+                .anyRequest().permitAll());
 
-                // .httpBasic(Customizer.withDefaults()); -> formLogin 안 할때 사용
-                // Customizer.withDefaults() -> 기본으로 띄워$
-                // .formLogin(Customizer.withDefaults()); // 시큐리티가 제공하는 기본 폼 페이지
-                .formLogin(login -> login.loginPage("/member/login")
-                        .successHandler(successHandler())
-                        .permitAll());
-        // 소셜 로그인도 할거임
+        // http.formLogin(login -> login.loginPage("/member/login")
+        // .successHandler(successHandler())
+        // .permitAll());
 
-        // . 으로 연결 안 할거면 http 다시 부르기
-        http.logout(logout -> logout
-                // sample member 컨트롤에 가라
-                .logoutRequestMatcher(new AntPathRequestMatcher("/member/logout"))
-                .logoutSuccessUrl("/"));
+        // http.logout(logout -> logout
+        // // sample member 컨트롤에 가라
+        // .logoutRequestMatcher(new AntPathRequestMatcher("/member/logout"))
+        // .logoutSuccessUrl("/"));
 
-        http.rememberMe(remember -> remember.rememberMeServices(rememberMeServices));
+        // http.rememberMe(remember -> remember.rememberMeServices(rememberMeServices));
 
         return http.build();
     }
@@ -60,11 +44,6 @@ public class SecurityConfig {
     @Bean // = new 한 후 스프링 컨테니ㅓ가 관리
     PasswordEncoder passwordEncoder() {
         return PasswordEncoderFactories.createDelegatingPasswordEncoder();
-    }
-
-    @Bean
-    CustomLoginSuccessHandler successHandler() {
-        return new CustomLoginSuccessHandler();
     }
 
     @Bean

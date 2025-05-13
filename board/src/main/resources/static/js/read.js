@@ -36,15 +36,21 @@ const replyList = () => {
     replyListElement.previousElementSibling.querySelector("span").innerHTML = data.length;
     let result = "";
 
+    // ${} -> dto랑 같아야 함
     data.forEach((reply) => {
-      result += `<div class="d-flex justify-content-between my-2 border-bottom reply-row" data-rno=${reply.rno}>`;
+      result += `<div class="d-flex justify-content-between my-2 border-bottom reply-row" data-rno=${reply.rno} data-email=${reply.replyerEmail} >`;
       result += `<div class="p-3"><img src="/img/default.png" alt="" class="rounded-circle mx-auto d-block" style="width: 60px; height: 60px" /></div>`;
-      result += `<div class="flex-grow-1 align-self-center"><div>${reply.replyer}</div>`;
+      result += `<div class="flex-grow-1 align-self-center"><div>${reply.replyerName}</div>`;
       result += `<div><span class="fs-5">${reply.text}</span></div>`;
       result += `<div class="text-muted"><span class="small">${formatDate(reply.createDate)}</span></div></div>`;
       result += `<div class="d-flex flex-column align-self-center">`;
-      result += `<div class="mb-2"><button class="btn btn-outline-danger btn-sm">삭제</button></div>`;
-      result += `<div><button class="btn btn-outline-success btn-sm">수정</button></div>`;
+
+      // 로그인 사용자 == 댓글 작성자
+      if (loginUser == reply.replyerEmail) {
+        result += `<div class="mb-2"><button class="btn btn-outline-danger btn-sm">삭제</button></div>`;
+        result += `<div><button class="btn btn-outline-success btn-sm">수정</button></div>`;
+      }
+
       result += `</div></div>`;
     });
     replyListElement.innerHTML = result;
@@ -60,17 +66,28 @@ document.querySelector(".replyList").addEventListener("click", (e) => {
   // rno 가져오기
   const rno = btn.closest(".reply-row").dataset.rno;
   console.log(rno);
+  // 댓글 작성자 가져오기
+  const replyerEmail = btn.closest(".reply-row").dataset.email;
 
   // 삭제 or 수정
 
   if (btn.classList.contains("btn-outline-danger")) {
     // 삭제
     if (!confirm("정말로 삭제하시겠습니까?")) return;
-    axios.delete(`/replies/${rno}`).then((res) => {
-      console.log(res.data);
-      // 댓글 다시 불러오기
-      replyList();
-    });
+
+    axios
+      .delete(`/replies/${rno}`, {
+        data: { replyerEmail: replyerEmail },
+        headers: {
+          "Content-Type": "application/json",
+          "X-CSRF-TOKEN": csrf,
+        },
+      })
+      .then((res) => {
+        console.log(res.data);
+        // 댓글 다시 불러오기
+        replyList();
+      });
   } else if (btn.classList.contains("btn-outline-success")) {
     // 수정
     axios.get(`/replies/${rno}`).then((res) => {
@@ -83,7 +100,8 @@ document.querySelector(".replyList").addEventListener("click", (e) => {
       const data = res.data;
 
       replyForm.rno.value = data.rno; // id는 어디서든 챙겨가기(html -> hidden)
-      replyForm.replyer.value = data.replyer;
+      replyForm.replyerName.value = data.replyerName;
+      replyForm.replyerEmail.value = data.replyerEmail;
       replyForm.text.value = data.text;
 
       //헤헤 내코드
@@ -94,52 +112,58 @@ document.querySelector(".replyList").addEventListener("click", (e) => {
   }
 });
 
-// 폼 submit => 수정 / 삽입
-replyForm.addEventListener("submit", (e) => {
-  e.preventDefault(); // 기본적으로 막아놓자
+// 폼 submit => 수정 / 삽입(있으면)
+if (replyForm) {
+  replyForm.addEventListener("submit", (e) => {
+    e.preventDefault(); // 기본적으로 막아놓자
 
-  const form = e.target;
-  const rno = form.rno.value;
+    const form = e.target;
+    const rno = form.rno.value;
 
-  // (e.target.rno.value)
-  if (form.rno.value) {
-    // 수정
-    axios
-      .put(`/replies/${rno}`, form, {
-        headers: {
-          "Content-Type": "application/json",
-        },
-      })
-      .then((res) => {
-        console.log(res.data);
-        alert("댓글 수정 완료");
+    // (e.target.rno.value)
+    if (form.rno.value) {
+      // 수정
+      axios
+        .put(`/replies/${rno}`, form, {
+          headers: {
+            "Content-Type": "application/json",
+            "X-CSRF-TOKEN": csrf,
+          },
+        })
+        .then((res) => {
+          console.log(res.data);
+          alert("댓글 수정 완료");
 
-        // form 기존 내용 지우기
-        replyForm.rno.value = "";
-        replyForm.replyer.value = "";
-        replyForm.text.value = "";
-        // 수정 내용 반영
-        replyList();
-      });
-  } else {
-    // 삽입
-    axios
-      .post("/replies/new", form, {
-        headers: {
-          "Content-Type": "application/json",
-        },
-      })
-      .then((res) => {
-        alert(res.data + " 댓글 등록");
-        // form 기존 내용 지우기
-        replyForm.rno.value = "";
-        replyForm.replyer.value = "";
-        replyForm.text.value = "";
-        // 삽입 내용 반영
-        replyList();
-      });
-  }
-});
+          // form 기존 내용 지우기
+          replyForm.rno.value = "";
+          replyForm.replyerEmail.value = "";
+          replyForm.replyerName.value = "";
+          replyForm.text.value = "";
+          // 수정 내용 반영
+          replyList();
+        });
+    } else {
+      // 삽입
+      axios
+        .post("/replies/new", form, {
+          headers: {
+            "Content-Type": "application/json",
+            "X-CSRF-TOKEN": csrf,
+          },
+        })
+        .then((res) => {
+          alert(res.data + " 댓글 등록");
+          // form 기존 내용 지우기
+          replyForm.rno.value = "";
+          replyForm.replyerName.value = "";
+          replyForm.replyerEmail.value = "";
+          replyForm.text.value = "";
+          // 삽입 내용 반영
+          replyList();
+        });
+    }
+  });
+}
 
 //페이지 로드시 호출
 replyList();

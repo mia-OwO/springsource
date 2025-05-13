@@ -13,10 +13,13 @@ import lombok.ToString;
 @ToString
 @Getter
 public class AuthMemberDTO extends User { // User을 extends해야 관리해줌
+
     private String email;
+
     private String name;
+
     private String password;
-    private boolean fromSocial;
+    private Boolean fromSocial;
 
     // username -> id 개념(실제 이름이 아님)
 
