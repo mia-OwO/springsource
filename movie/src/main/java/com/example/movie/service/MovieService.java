@@ -1,5 +1,6 @@
 package com.example.movie.service;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.function.Function;
@@ -18,7 +19,10 @@ import com.example.movie.dto.PageResultDTO;
 import com.example.movie.entity.Movie;
 import com.example.movie.entity.MovieImage;
 import com.example.movie.repository.MovieImageRepository;
+import com.example.movie.repository.MovieRepository;
+import com.example.movie.repository.ReviewRepository;
 
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 
@@ -27,54 +31,87 @@ import lombok.extern.log4j.Log4j2;
 @RequiredArgsConstructor
 public class MovieService {
 
-    public final MovieImageRepository movieImageRepository;
+        public final MovieImageRepository movieImageRepository;
+        public final MovieRepository movieRepository;
+        public final ReviewRepository reviwRepository;
 
-    // PageRequestDTO: 페이지 정보 -> 가지고 오기
-    public PageResultDTO<MovieDTO> getList(PageRequestDTO pageRequestDTO) {
+        @Transactional // 테이블 3개 한번에(하나 에러나면 되돌려)
+        public void deleteRow(Long mno) {
+                // 제거할 영화 찾기
+                Movie movie = Movie.builder().mno(mno).build();
 
-        Pageable pageable = PageRequest.of(pageRequestDTO.getPage() - 1, pageRequestDTO.getSize(),
-                Sort.by("mno").descending());
-        Page<Object[]> result = movieImageRepository.getTotalList(null, null, pageable);
-        //
-        // [Movie(mno=91, title=Movie 91), MovieImage(inum=285,
-        // uuid=cc895070-151d-4177-88d1-9ea22411ed0f, imgName=test0.jpg, path=null,
-        // ord=0), 2, 4.0]
-        // -> 바꾸기
+                // 자식 삭제
+                movieImageRepository.deleteByMovie(movie);
+                reviwRepository.deleteByMovie(movie);
 
-        Function<Object[], MovieDTO> function = (en -> entityToDto((Movie) en[0],
-                (List<MovieImage>) Arrays.asList((MovieImage) en[1]), (Long) en[2],
-                (Double) en[3]));
+                // 부모 삭제
+                movieRepository.delete(movie);
+        }
 
-        List<MovieDTO> dtoList = result.stream().map(function).collect(Collectors.toList());
-        Long totalCount = result.getTotalElements();
+        public MovieDTO getRow(Long mno) {
+                List<Object[]> result = movieImageRepository.getMovieRow(mno);
+                Movie movie = (Movie) result.get(0)[0];
 
-        PageResultDTO<MovieDTO> pageResultDTO = PageResultDTO.<MovieDTO>withAll()
-                .dtoList(dtoList)
-                .totalCount(totalCount)
-                .pageRequestDTO(pageRequestDTO)
-                .build();
-        return pageResultDTO;
-    }
+                List<MovieImage> movieImages = new ArrayList<>();
+                result.forEach(arr -> {
+                        MovieImage movieImage = (MovieImage) arr[1];
+                        movieImages.add(movieImage);
+                });
 
-    private MovieDTO entityToDto(Movie movie, List<MovieImage> movieImages, Long count, Double avg) {
-        MovieDTO movieDTO = MovieDTO.builder()
-                .mno(movie.getMno())
-                .title(movie.getTitle())
-                .createdDate(movie.getCreateDate())
-                .build();
-        // 이미지 정보 담기
-        List<MovieImageDTO> mImageDTOs = movieImages.stream().map(movieImage -> {
-            return MovieImageDTO.builder()
-                    .inum(movieImage.getInum())
-                    .uuid(movieImage.getUuid())
-                    .imgName(movieImage.getImgName())
-                    .path(movieImage.getPath())
-                    .build();
-        }).collect(Collectors.toList());
-        movieDTO.setMovieImages(mImageDTOs);
-        movieDTO.setAvg(avg != null ? avg : 0.0);
-        movieDTO.setReviewCnt(count);
-        return movieDTO;
-    }
+                Long cnt = (Long) result.get(0)[2];
+                Double avg = (Double) result.get(0)[3];
+
+                entityToDto(movie, movieImages, cnt, avg);
+
+                return entityToDto(movie, movieImages, cnt, avg);
+        }
+
+        // PageRequestDTO: 페이지 정보 -> 가지고 오기
+        public PageResultDTO<MovieDTO> getList(PageRequestDTO pageRequestDTO) {
+
+                Pageable pageable = PageRequest.of(pageRequestDTO.getPage() - 1, pageRequestDTO.getSize(),
+                                Sort.by("mno").descending());
+                Page<Object[]> result = movieImageRepository.getTotalList(null, null, pageable);
+                //
+                // [Movie(mno=91, title=Movie 91), MovieImage(inum=285,
+                // uuid=cc895070-151d-4177-88d1-9ea22411ed0f, imgName=test0.jpg, path=null,
+                // ord=0), 2, 4.0]
+                // -> 바꾸기
+
+                Function<Object[], MovieDTO> function = (en -> entityToDto((Movie) en[0],
+                                (List<MovieImage>) Arrays.asList((MovieImage) en[1]), (Long) en[2],
+                                (Double) en[3]));
+
+                List<MovieDTO> dtoList = result.stream().map(function).collect(Collectors.toList());
+                Long totalCount = result.getTotalElements();
+
+                PageResultDTO<MovieDTO> pageResultDTO = PageResultDTO.<MovieDTO>withAll()
+                                .dtoList(dtoList)
+                                .totalCount(totalCount)
+                                .pageRequestDTO(pageRequestDTO)
+                                .build();
+                return pageResultDTO;
+        }
+
+        private MovieDTO entityToDto(Movie movie, List<MovieImage> movieImages, Long count, Double avg) {
+                MovieDTO movieDTO = MovieDTO.builder()
+                                .mno(movie.getMno())
+                                .title(movie.getTitle())
+                                .createdDate(movie.getCreateDate())
+                                .build();
+                // 이미지 정보 담기
+                List<MovieImageDTO> mImageDTOs = movieImages.stream().map(movieImage -> {
+                        return MovieImageDTO.builder()
+                                        .inum(movieImage.getInum())
+                                        .uuid(movieImage.getUuid())
+                                        .imgName(movieImage.getImgName())
+                                        .path(movieImage.getPath())
+                                        .build();
+                }).collect(Collectors.toList());
+                movieDTO.setMovieImages(mImageDTOs);
+                movieDTO.setAvg(avg != null ? avg : 0.0);
+                movieDTO.setReviewCnt(count);
+                return movieDTO;
+        }
 
 }

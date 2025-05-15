@@ -35,7 +35,10 @@
                   </div>
                   <div>
                     <p class="font-semibold">
-                      <a href="" th:text="${movie.title}"></a>
+                      <a
+                        th:href="@{/movie/read(mno=${movie.mno},page=${pageRequestDTO.page},size=${pageRequestDTO.size},type=${pageRequestDTO.type},keyword=${pageRequestDTO.keyword})}"
+                        th:text="${movie.title}"
+                      ></a>
                     </p>
                   </div>
                 </div>
@@ -62,7 +65,7 @@
         <span class="flex col-span-4 mt-2 sm:mt-auto sm:justify-end">
           <nav aria-label="Table navigation">
             <ul class="inline-flex items-center">
-              <li>
+              <li th:class="page-item" th:if="${result.prev}">
                 <a
                   class="px-3 py-1 rounded-md rounded-l-lg focus:outline-none focus:shadow-outline-purple"
                   aria-label="Previous"
@@ -87,7 +90,7 @@
                 </a>
               </li>
 
-              <li>
+              <li class="page-item" th:if="${result.next}">
                 <a
                   class="px-3 py-1 rounded-md rounded-r-lg focus:outline-none focus:shadow-outline-purple"
                   aria-label="Next"
