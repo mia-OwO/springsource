@@ -23,6 +23,25 @@ public class MovieController {
 
     private final MovieService movieService;
 
+    @GetMapping("/create")
+    public void getCreate(PageRequestDTO pageRequestDTO) {
+        log.info("영화등록");
+    }
+
+    @PostMapping("/create")
+    public String postCreate(MovieDTO dto, PageRequestDTO pageRequestDTO, RedirectAttributes rttr) {
+        log.info("영화등록 요청 {}", dto);
+        Long mno = movieService.createMovie(dto);
+
+        rttr.addAttribute("mno", mno);
+        rttr.addAttribute("page", pageRequestDTO.getPage());
+        rttr.addAttribute("size", pageRequestDTO.getSize());
+        rttr.addAttribute("type", pageRequestDTO.getType());
+        rttr.addAttribute("keyword", pageRequestDTO.getKeyword());
+
+        return "redirect:/movie/read";
+    }
+
     @PostMapping("/remove")
     public String removeMovie(Long mno, PageRequestDTO pageRequestDTO, RedirectAttributes rttr) {
         log.info("영화 삭제 {}", mno);
