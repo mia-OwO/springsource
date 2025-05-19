@@ -16,7 +16,7 @@ import lombok.ToString;
 @Getter
 @Setter
 public class ReviewDTO {
-
+    private Long rno;
     private int grade;
     private String text;
     private LocalDateTime createdDate;
@@ -28,4 +28,7 @@ public class ReviewDTO {
     private String nickname;
 
     // movie를 가져오진 않움
+
+    // movie
+    private Long mno;
 }

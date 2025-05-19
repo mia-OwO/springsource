@@ -13,6 +13,7 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.RememberMeServices;
 import org.springframework.security.web.authentication.rememberme.TokenBasedRememberMeServices;
 import org.springframework.security.web.authentication.rememberme.TokenBasedRememberMeServices.RememberMeTokenAlgorithm;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 // import com.example.movie.security.CustomLoginSuccessHandler;
 
@@ -25,18 +26,23 @@ public class SecurityConfig {
     SecurityFilterChain securityFilterChain(HttpSecurity http, RememberMeServices rememberMeServices) throws Exception {
 
         http.authorizeHttpRequests(authirize -> authirize
-
-                .anyRequest().permitAll());
+                .requestMatchers("/", "/assets/**", "/css/**", "/js/**", "/upload/**").permitAll()
+                .requestMatchers("/movie/list", "/movie/read").permitAll()
+                .requestMatchers("/reviews/**", "/upload/display/**").permitAll()
+                .requestMatchers("/member/register").permitAll()
+                .anyRequest().authenticated());
         http.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.ALWAYS));
 
-        // http.formLogin(login -> login.loginPage("/member/login")
-        // .successHandler(successHandler())
-        // .permitAll());
+        // http.csrf(csrf -> csrf.disable()); // csrf 멈추기
 
-        // http.logout(logout -> logout
-        // // sample member 컨트롤에 가라
-        // .logoutRequestMatcher(new AntPathRequestMatcher("/member/logout"))
-        // .logoutSuccessUrl("/"));
+        http.formLogin(login -> login.loginPage("/member/login")
+                .defaultSuccessUrl("/movie/list")
+                .permitAll());
+
+        http.logout(logout -> logout
+                // sample member 컨트롤에 가라
+                .logoutRequestMatcher(new AntPathRequestMatcher("/member/logout"))
+                .logoutSuccessUrl("/"));
 
         // http.rememberMe(remember -> remember.rememberMeServices(rememberMeServices));
 

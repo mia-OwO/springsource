@@ -12,6 +12,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.example.movie.entity.Member;
 import com.example.movie.entity.MemberRole;
@@ -35,6 +36,28 @@ public class MovieRepositoryTest {
 
     @Autowired
     private PasswordEncoder passwordEncoder;
+
+    // 리뷰 조회
+    @Test
+    public void testFindByMovie() {
+        System.out.println(reviewRepository.findByMovie(Movie.builder().mno(10L).build()));
+    }
+
+    // 리뷰 조회(member정보 포함)
+    // @Transactional : select 2개, 나눠서 가져옴 // -> EntityGraph(attributePaths =
+    // "member", type
+    // = EntityGraphType.FETCH) --> join(한번에 가져옴)
+    @Test
+    public void testFindByMovie2() {
+        List<Review> list = reviewRepository.findByMovie(Movie.builder().mno(10L).build());
+
+        for (Review review : list) {
+            System.out.println(review);
+            // 리뷰 작성자 조회
+            System.out.println(review.getMember().getEmail());
+
+        }
+    }
 
     // 영화 삽입
     @Test
