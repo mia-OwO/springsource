@@ -36,4 +36,11 @@ public class Member extends BaseEntity {
     @Enumerated(EnumType.STRING) // String형식으로
     private MemberRole memberRole; // 권한 포함
 
+    public void changeNickname(String nickname) {
+        this.nickname = nickname;
+    }
+
+    public void changePassword(String password) {
+        this.password = password;
+    }
 }

@@ -17,6 +17,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.FileCopyUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -48,7 +49,7 @@ public class UploadController {
     }
 
     // MultipartFile[] uploadFiles : 파일 전송 mutiple로 보내서 배열로 받음
-
+    @PreAuthorize("isAuthenticated()")
     @PostMapping("/files")
     public ResponseEntity<List<UploadResultDTO>> postUpload(MultipartFile[] uploadFiles) {
 
@@ -123,6 +124,7 @@ public class UploadController {
         return result;
     }
 
+    @PreAuthorize("isAuthenticated()")
     @PostMapping("/removeFile")
     // 원본파일을 받아서 원본 삭제후 썸네일(+s) 삭제
     public ResponseEntity<String> postMethodName(String fileName) {

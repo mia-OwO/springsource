@@ -12,7 +12,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.transaction.annotation.Transactional;
 
 import com.example.movie.entity.Member;
 import com.example.movie.entity.MemberRole;
@@ -91,7 +90,7 @@ public class MovieRepositoryTest {
             Member member = Member.builder()
                     .email("user" + i + "@gmail.com")
                     .password(passwordEncoder.encode("1111"))
-                    .memberRole(MemberRole.Memeber)
+                    .memberRole(MemberRole.MEMBER)
                     .nickname("viewer" + i)
                     .build();
 

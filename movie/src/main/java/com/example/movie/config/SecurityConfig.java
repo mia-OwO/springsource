@@ -30,13 +30,13 @@ public class SecurityConfig {
                 .requestMatchers("/movie/list", "/movie/read").permitAll()
                 .requestMatchers("/reviews/**", "/upload/display/**").permitAll()
                 .requestMatchers("/member/register").permitAll()
-                .anyRequest().authenticated());
+                .anyRequest().permitAll());
         http.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.ALWAYS));
 
         // http.csrf(csrf -> csrf.disable()); // csrf 멈추기
 
         http.formLogin(login -> login.loginPage("/member/login")
-                .defaultSuccessUrl("/movie/list")
+                .defaultSuccessUrl("/")
                 .permitAll());
 
         http.logout(logout -> logout
